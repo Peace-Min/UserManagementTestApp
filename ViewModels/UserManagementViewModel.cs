@@ -155,8 +155,11 @@ namespace UserManagementTestApp.ViewModels
                 UserForm.Name = SelectedUser.Name;
                 UserForm.EmployeeNumber = SelectedUser.EmployeeNumber;
                 UserForm.Department = SelectedUser.Department;
-                UserForm.Password = SelectedUser.Password;
-                UserForm.ConfirmPassword = SelectedUser.Password;
+
+                // 수정 모드에서는 비밀번호 필드를 비워둠 (암호화된 값을 표시하지 않음)
+                // 사용자가 새 비밀번호를 입력하지 않으면 기존 비밀번호가 유지됨
+                UserForm.Password = "";
+                UserForm.ConfirmPassword = "";
             }
         }
 
