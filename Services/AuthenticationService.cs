@@ -68,6 +68,20 @@ namespace UserManagementTestApp.Services
             return true;
         }
 
+        public bool CheckIdExists(string id)
+        {
+            // 관리자 계정 확인
+            string adminId = ConfigurationManager.AppSettings["AdminId"];
+            if (id == adminId)
+            {
+                return true;
+            }
+
+            // 일반 사용자 확인
+            var users = GetUsers();
+            return users.Any(u => u.Id == id);
+        }
+
         public User Login(string id, string password)
         {
             // 입력받은 비번을 현재 방식대로 '해시'해서 비교

@@ -61,14 +61,38 @@ namespace UserManagementTestApp.ViewModels
         {
             ErrorMessage = ""; // 초기화
 
-            if (string.IsNullOrWhiteSpace(Id) || string.IsNullOrWhiteSpace(Password))
+            // 1. 텍스트 입력 확인 (순차적)
+            if (string.IsNullOrWhiteSpace(Id))
             {
-                ErrorMessage = "아이디와 비밀번호를 입력해주세요.";
+                ErrorMessage = "아이디를 입력해주세요.";
+                return;
+            }
+
+            // 2. 아이디 유효성 확인 (존재 여부)
+            // 텍스트가 있어도 아이디가 없으면 비밀번호 입력 여부와 상관없이 아이디 에러를 먼저 내거나,
+            // 텍스트 입력을 모두 확인한 후 아이디 유효성을 체크하는 것이 일반적이나
+            // 사용자의 '순차적' 요청에 따라 아이디 입력됨 -> 아이디 유효성 체크 -> 비밀번호 입력됨 -> 비밀번호 일치 체크 순으로 갈 수도 있음.
+            // 여기서는 요청된 순서(1. 텍스트, 2. 아이디유효성, 3. 비밀번호 등)를 고려하여
+            // 모든 텍스트 필드가 채워져 있는지 먼저 확인.
+            
+            if (string.IsNullOrWhiteSpace(Password))
+            {
+                // 아이디는 입력되었으나 비밀번호가 없는 경우
+                ErrorMessage = "비밀번호를 입력해주세요.";
                 return;
             }
 
             try
             {
+                // 3. 아이디 존재 여부 확인
+                bool isIdValid = _authService.CheckIdExists(Id);
+                if (!isIdValid)
+                {
+                    ErrorMessage = "존재하지 않는 아이디입니다.";
+                    return;
+                }
+
+                // 4. 아이디 + 비밀번호 확인 (Login 호출)
                 User user = _authService.Login(Id, Password);
                 if (user != null)
                 {
@@ -77,7 +101,8 @@ namespace UserManagementTestApp.ViewModels
                 }
                 else
                 {
-                    ErrorMessage = "아이디 또는 비밀번호가 올바르지 않습니다.";
+                    // 아이디는 존재하나 로그인이 실패했으므로 비밀번호 불일치
+                    ErrorMessage = "비밀번호가 일치하지 않습니다.";
                 }
             }
             catch (Exception ex)
