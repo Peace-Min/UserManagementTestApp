@@ -17,6 +17,18 @@ namespace UserManagementTestApp
         {
             base.OnStartup(e);
 
+#if DEBUG
+            // 앱 시작 시 로직 검증 테스트 실행 (Output 창 확인)
+            try
+            {
+                UserManagementTestApp.Tests.LogicVerifier.RunTests();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"테스트 실행 중 치명적 오류: {ex.Message}");
+            }
+#endif
+
             string requireLogin = System.Configuration.ConfigurationManager.AppSettings["RequireLogin"];
 
             // "false"일 때만 로그인을 건너뜁니다. (기본값 또는 없으면 로그인 수행)

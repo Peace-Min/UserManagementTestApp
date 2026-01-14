@@ -126,7 +126,7 @@
 
         <!-- Detail Form (Binding UserForm.* properties) -->
         <Border Grid.Row="4" Background="#1A1F24" BorderBrush="#4A5562" BorderThickness="1" Padding="20">
-            <Grid IsEnabled="{Binding IsFormEnabled}">
+            <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="120"/>
                     <ColumnDefinition Width="*"/>

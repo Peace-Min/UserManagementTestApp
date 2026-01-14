@@ -18,6 +18,5 @@ namespace UserManagementTestApp.Models
         public string EmployeeNumber { get; set; } // 사번
         public string Department { get; set; }      // 부서
         public string Password { get; set; }
-        public bool IsAdmin { get; set; }
     }
 }

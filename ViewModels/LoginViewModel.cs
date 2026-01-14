@@ -96,6 +96,9 @@ namespace UserManagementTestApp.ViewModels
                 User user = _authService.Login(Id, Password);
                 if (user != null)
                 {
+                    // 로그인 성공 시 세션에 정보 저장
+                    UserSession.Instance.CurrentUser = user;
+
                     // 로그인 성공 이벤트 발생
                     LoginSuccess?.Invoke(this, user);
                 }
