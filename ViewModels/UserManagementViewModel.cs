@@ -215,7 +215,7 @@ namespace UserManagementTestApp.ViewModels
                     return false;
                 }
 
-                if (!_authService.ValidatePasswordPolicy(UserForm.Password, out string policyMsg))
+                if (!_authService.ValidatePasswordPolicy(UserForm.Id, UserForm.Password, out string policyMsg))
                 {
                     ErrorMessage = policyMsg;
                     return false;

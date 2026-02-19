@@ -19,6 +19,7 @@ namespace UserManagementTestApp.Tests
                 TestCryptoHelper();
                 TestUserService();
                 TestAuthenticationService();
+                TestPasswordValidation();
                 
                 Console.WriteLine("\n[SUCCESS] 모든 테스트를 통과했습니다!");
             }
@@ -130,6 +131,53 @@ namespace UserManagementTestApp.Tests
 
             // 정리
             userService.DeleteUser(testId);
+
+            Console.WriteLine("OK");
+        }
+
+        private static void TestPasswordValidation()
+        {
+            Console.Write("4. PasswordPolicy (비밀번호 규칙) 테스트... ");
+            var auth = new AuthenticationService();
+            string msg;
+
+            // 1. 길이 실패 (짧음)
+            if (auth.ValidatePasswordPolicy("user", "Short1!", out msg)) throw new Exception("길이 미달 비번 허용됨");
+            if (!msg.Contains("9~12자리")) throw new Exception("길이 오류 메시지 불일치");
+
+            // 1. 길이 실패 (김)
+            if (auth.ValidatePasswordPolicy("user", "TooLongPassword123!", out msg)) throw new Exception("길이 초과 비번 허용됨");
+
+            // 1. 복잡성 실패 (숫자 없음)
+            if (auth.ValidatePasswordPolicy("user", "NoDigitPass!", out msg)) throw new Exception("숫자 없는 비번 허용됨");
+
+            // 1. 복잡성 실패 (특수문자 없음)
+            if (auth.ValidatePasswordPolicy("user", "NoSpecial123", out msg)) throw new Exception("특수문자 없는 비번 허용됨");
+
+            // 4. 아이디 포함 실패 (대소문자 무시 체크)
+            if (auth.ValidatePasswordPolicy("TestUser", "123testuser!", out msg)) throw new Exception("대소문자 다른 아이디 포함 비번 허용됨");
+
+            // 2. 동일 문자 3회
+            if (auth.ValidatePasswordPolicy("user", "aaapass1!", out msg)) throw new Exception("동일 문자 3회 비번 허용됨");
+            if (!msg.Contains("동일한 문자")) throw new Exception("동일 문자 오류 메시지 불일치");
+
+            // 3. 연속 문자 (abc)
+            if (auth.ValidatePasswordPolicy("user", "abcPass1!", out msg)) throw new Exception("연속 문자 비번 허용됨");
+            
+            // 3. 연속 문자 (대소문자 혼합 abc -> aBc)
+            if (auth.ValidatePasswordPolicy("user", "aBcPass1!", out msg)) throw new Exception("대소문자 혼합 연속 문자 비번 허용됨");
+            
+            // 3. 연속 문자 (역순 cba)
+            if (auth.ValidatePasswordPolicy("user", "cbaPass1!", out msg)) throw new Exception("역순 문자 비번 허용됨");
+
+            // 3. 연속 숫자 (123)
+            if (auth.ValidatePasswordPolicy("user", "Pass123!", out msg)) throw new Exception("연속 숫자 비번 허용됨");
+            
+            // 3. 연속 숫자 (역순 321)
+            if (auth.ValidatePasswordPolicy("user", "Pass321!", out msg)) throw new Exception("역순 숫자 비번 허용됨");
+
+            // 성공 케이스
+            if (!auth.ValidatePasswordPolicy("user", "ValidPass1!", out msg)) throw new Exception($"정상 비번 거부됨: {msg}");
 
             Console.WriteLine("OK");
         }

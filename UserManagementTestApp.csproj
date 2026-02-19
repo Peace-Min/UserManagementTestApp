@@ -84,6 +84,7 @@
     <Compile Include="ViewModels\UserManagementViewModel.cs" />
     <Compile Include="ViewModels\UserFormModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
+    <Compile Include="Tests\LogicVerifier.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="LoginWindow.xaml">
